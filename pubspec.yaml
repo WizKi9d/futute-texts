@@ -29,6 +29,9 @@ dependencies:
   contacts_plugin: ^0.0.3
   intl: ^0.16.1
   sms: ^0.2.0
+  hexcolor: ^1.0.6
+  flutter_slidable: ^0.5.7
+  dough: ^0.3.6
 
 
 
