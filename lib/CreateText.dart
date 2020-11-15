@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:contacts_plugin/contacts_plugin.dart';
+//import 'package:contacts_plugin/contacts_plugin.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:dough/dough.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -309,8 +310,6 @@ class _CreateTextState extends State<CreateText> {
                                   borderSide: BorderSide(color: HexColor("D2D2D2"))
                               ),
                           ),
-                          validator: (val) =>
-                          val.length == 0 ? "Please enter a message" : null,
                           onSaved: (val) => this.text = val,
                         ),
                       ),
@@ -370,12 +369,11 @@ class ChooseContact extends StatefulWidget {
 class _chooseContactState extends State<ChooseContact> {
 
   String _searchTerm = "";
-  var _contacts;
-  var chosenContacts;
 
-  getContacts() async {
-    _contacts = await ContactsPlugin().getContacts();
-  }
+  Future<Iterable<Contact>> _contacts = ContactsService.getContacts();
+
+  //var _contacts = ContactsPlugin().getContacts().then((value) => value.toSet().toList());
+  Future<Iterable<Contact>> chosenContacts;
 
   updateSearchTerm(String val) {
     setState(() {
@@ -385,7 +383,6 @@ class _chooseContactState extends State<ChooseContact> {
 
   @override
   Widget build(BuildContext context) {
-    getContacts();
     return Scaffold(
       body: Column(
         children: [
@@ -419,10 +416,14 @@ class _chooseContactState extends State<ChooseContact> {
                 child: TextFormField(
                   onChanged: (str) {
                     setState(() {
-                      print(str);
                       chosenContacts = _contacts.then((value) =>
-                          value.where((element) => (element.firstName.toLowerCase() + "" + element.lastName.toLowerCase())
-                              .contains(str.toLowerCase())).toList());
+                          value.where((element) => element.givenName != null
+                              ? element.displayName != null ? element.displayName.toLowerCase().contains(str.toLowerCase()) : false : false));
+                      /*
+                      chosenContacts = _contacts.then((value) =>
+                          value.where((element) => element.givenName != null
+                              ? element.familyName != null ? (element.givenName.toLowerCase() + " " +  element.familyName.toLowerCase()).contains(str.toLowerCase()) : element.givenName.toLowerCase().contains(str.toLowerCase())
+                              : element.familyName != null ? (element.familyName.toLowerCase()).contains(str.toLowerCase()) : false));*/
                     });
                   },
                   maxLines: 1,
@@ -444,7 +445,7 @@ class _chooseContactState extends State<ChooseContact> {
           Expanded(
             child: FutureBuilder(
               future: chosenContacts ?? _contacts,
-                builder: (BuildContext context, AsyncSnapshot<List<Contact>> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<Iterable<Contact>> snapshot) {
                   if (!snapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
                   }
@@ -495,9 +496,9 @@ class ContactWidget extends StatelessWidget {
   String _number;
 
   _returnContact() {
-    _firstName = _contact.firstName;
-    _lastName = _contact.lastName;
-    _number = _contact.phoneNumbers.first.number;
+    _firstName = _contact.givenName;
+    _lastName = _contact.familyName;
+    _number = _contact.phones.first.value;
 
     var contact = Client(firstName: _firstName, lastName: _lastName, text: "text", number: _number);
 
@@ -509,7 +510,7 @@ class ContactWidget extends StatelessWidget {
     return GestureDetector(
         onTap: () => _returnContact(),
         child: Padding(
-          padding: new EdgeInsets.fromLTRB(15, 10, 15, 10),
+          padding: new EdgeInsets.fromLTRB(18, 10, 18, 10),
           child: Container(
             height: 70.0,
             decoration: BoxDecoration(
@@ -533,20 +534,11 @@ class ContactWidget extends StatelessWidget {
                   child: Text(_contact.displayName?.substring(0, 1)?.toUpperCase() ?? "")
                 ),
                 ),
-                Text(_contact.displayName ?? "No name..."),
+                Text(_contact.displayName ?? "No name"),
               ],
             ),
           ),
         ),
-
-        /*ListTile(
-          leading: CircleAvatar(
-              backgroundColor:
-              Colors.primaries[Random().nextInt(Colors.primaries.length - 1)],
-              child:
-              Text(_contact.displayName?.substring(0, 1)?.toUpperCase() ?? "")),
-          title: Text(_contact.displayName ?? "<null>"),
-        ),*/
       );
   }
 }

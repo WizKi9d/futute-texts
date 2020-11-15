@@ -26,7 +26,7 @@ dependencies:
   sqflite: ^1.3.1+1
   path_provider: ^1.6.24
   flutter_sms: ^2.1.1
-  contacts_plugin: ^0.0.3
+  contacts_service: ^0.4.6
   intl: ^0.16.1
   sms: ^0.2.0
   hexcolor: ^1.0.6
