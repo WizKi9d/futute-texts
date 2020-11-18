@@ -1,16 +1,18 @@
 # future_texts
 
-Future Texting
+Text scheduler app plus many other features.
 
-## Getting Started
+Build week: 2
 
-This project is a starting point for a Flutter application.
+## Design
 
-A few resources to get you started if this is your first Flutter project:
+Designed and written by Alex Wzorek.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Features at the moment are limited:
+* Schedule texts
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Features being worked on:
+* Writing plugin for contacts
+* Writing plugin to send texts
+* Writing plugin for foreground services allowing the app to send texts even after its closed
+* Add automated message between set times by user to send back a text when notification is received through notification
